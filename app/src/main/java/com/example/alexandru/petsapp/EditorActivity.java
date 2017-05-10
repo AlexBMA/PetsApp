@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class Editor extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity {
 
     /**
      * EditText field to enter the pet's name
