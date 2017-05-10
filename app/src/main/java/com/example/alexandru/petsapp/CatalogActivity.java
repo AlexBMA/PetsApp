@@ -1,12 +1,18 @@
 package com.example.alexandru.petsapp;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.example.alexandru.data.PetContact;
+import com.example.alexandru.data.PetDbHelper;
 
 public class CatalogActivity extends AppCompatActivity {
 
@@ -24,7 +30,27 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        displayDatabaseInfo();
     }
+
+
+    private void displayDatabaseInfo() {
+
+        PetDbHelper mDbHelper = new PetDbHelper(this);
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + PetContact.PetEntry.TABLE_NAME, null);
+
+
+        Log.e("Column count ", cursor.getColumnCount() + " ");
+        Log.e("Column name", cursor.getColumnNames()[2]);
+
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
