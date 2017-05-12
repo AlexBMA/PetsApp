@@ -11,8 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.alexandru.dao.DbBasicOperations;
+import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact;
 import com.example.alexandru.data.PetDbHelper;
+import com.example.alexandru.model.Pet;
 
 public class CatalogActivity extends AppCompatActivity {
 
@@ -45,7 +48,7 @@ public class CatalogActivity extends AppCompatActivity {
 
 
         Log.e("Column count ", cursor.getColumnCount() + " ");
-        Log.e("Column name", cursor.getColumnNames()[2]);
+        Log.e("Row count ", cursor.getCount() + " ");
 
 
     }
@@ -65,14 +68,37 @@ public class CatalogActivity extends AppCompatActivity {
         // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
-            case R.id.action_insert_dummy_data:
-                // Do nothing for now
+            case R.id.action_insert_dummy_data: {
+                insetPet();
                 return true;
+            }
             // Respond to a click on the "Delete all entries" menu option
-            case R.id.action_delete_all_entries:
-                // Do nothing for now
+            case R.id.action_delete_all_entries: {
                 return true;
+            }
+
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void insetPet() {
+
+        Pet tempPet = new Pet();
+        tempPet.setBreed("Terrier");
+        tempPet.setName("Toto");
+        tempPet.setWeight(12);
+        tempPet.setGender(1);
+
+
+        DbBasicOperations<Pet> petsOP = new PetsDaoImpl();
+        PetDbHelper mDbHelper = new PetDbHelper(this);
+        long newRowId = petsOP.insertItemAndGetId(mDbHelper, tempPet);
+
+
+        Log.e("New row id ", newRowId + " ");
+
+
+    }
+
+
 }
