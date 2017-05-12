@@ -113,9 +113,9 @@ public class EditorActivity extends AppCompatActivity {
 
     private void insertOrUpdate() {
         Pet tempPet = new Pet();
+        tempPet.setGender(mGender);
         tempPet.setName(mNameEditText.getText().toString().trim());
         tempPet.setBreed(mBreedEditText.getText().toString().trim());
-        tempPet.setGender(mGender);
         int tempWeight = Integer.parseInt(mWeightEditText.getText().toString().trim());
         tempPet.setWeight(tempWeight);
 

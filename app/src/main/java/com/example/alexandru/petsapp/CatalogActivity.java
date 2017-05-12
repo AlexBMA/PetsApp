@@ -1,8 +1,6 @@
 package com.example.alexandru.petsapp;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +8,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.alexandru.dao.DbBasicOperations;
 import com.example.alexandru.dao.PetsDaoImpl;
-import com.example.alexandru.data.PetContact;
 import com.example.alexandru.data.PetDbHelper;
 import com.example.alexandru.model.Pet;
+
+import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity {
 
@@ -47,12 +47,20 @@ public class CatalogActivity extends AppCompatActivity {
     private void displayDatabaseInfo() {
 
 
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + PetContact.PetEntry.TABLE_NAME, null);
+        DbBasicOperations<Pet> dbOp = new PetsDaoImpl();
+        List<Pet> list = dbOp.getAllItems(mDbHelper);
 
-        Log.e("Column count ", cursor.getColumnCount() + " ");
-        Log.e("Row count ", cursor.getCount() + " ");
+        TextView textView = (TextView) findViewById(R.id.text_view_pet);
 
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+
+
+            textView.append("\n" + list.get(i).toString());
+        }
+
+
+        //dbOp.getItem(mDbHelper,1);
     }
 
 
@@ -96,9 +104,7 @@ public class CatalogActivity extends AppCompatActivity {
         PetDbHelper mDbHelper = new PetDbHelper(this);
         long newRowId = petsOP.insertItemAndGetId(mDbHelper, tempPet);
 
-
         Log.e("New row id ", newRowId + " ");
-
 
     }
 
