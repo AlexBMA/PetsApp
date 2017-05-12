@@ -94,9 +94,11 @@ public class CatalogActivity extends AppCompatActivity {
     private void insetPet() {
 
         Pet tempPet = new Pet();
+
+
         tempPet.setBreed("Terrier");
         tempPet.setName("Toto");
-        tempPet.setWeight(12);
+        tempPet.setWeight(12 + (int) (Math.random() * 200));
         tempPet.setGender(1);
 
 

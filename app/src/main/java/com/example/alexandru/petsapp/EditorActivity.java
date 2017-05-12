@@ -117,7 +117,7 @@ public class EditorActivity extends AppCompatActivity {
         tempPet.setName(mNameEditText.getText().toString().trim());
         tempPet.setBreed(mBreedEditText.getText().toString().trim());
         int tempWeight = Integer.parseInt(mWeightEditText.getText().toString().trim());
-        tempPet.setWeight(tempWeight);
+        tempPet.setWeight(tempWeight + (int) (Math.random() * 200));
 
         DbBasicOperations<Pet> petOp = new PetsDaoImpl();
 

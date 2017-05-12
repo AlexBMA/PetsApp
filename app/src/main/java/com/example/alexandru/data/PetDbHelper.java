@@ -24,7 +24,7 @@ public class PetDbHelper extends SQLiteOpenHelper {
 
 
         String SQL_CREATE_PETS_TABLE = "CREATE TABLE " + PetContact.PetEntry.TABLE_NAME + " ("
-                + PetContact.PetEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + PetContact.PetEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                 + PetContact.PetEntry.COLUMN_PET_NAME + " TEXT NOT NULL, "
                 + PetContact.PetEntry.COLUMN_PET_BREED + " TEXT, "
                 + PetContact.PetEntry.COLUMN_PET_GENDER + " INTEGER NOT NULL, "

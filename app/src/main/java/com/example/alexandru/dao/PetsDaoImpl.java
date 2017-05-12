@@ -95,6 +95,15 @@ public class PetsDaoImpl implements PetsDao<Pet> {
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+        String[] projection = {
+                PetContact.PetEntry._ID,
+                PetContact.PetEntry.COLUMN_PET_NAME,
+                PetContact.PetEntry.COLUMN_PET_BREED,
+                PetContact.PetEntry.COLUMN_PET_WEIGHT,
+                PetContact.PetEntry.COLUMN_PET_GENDER
+        };
+
+
         List<Pet> listPets = new ArrayList<>();
 
         Cursor c = db.query(PetContact.PetEntry.TABLE_NAME, null, null, null, null, null, null);
@@ -103,13 +112,14 @@ public class PetsDaoImpl implements PetsDao<Pet> {
         Pet temp;
 
         Log.e(" count ", c.getCount() + "");
-        c.moveToFirst();
+
         for (int i = 0; i < size; i++) {
 
+            c.moveToPosition(i);
             temp = new Pet();
             putDataInObject(c, temp);
+            Log.e(" temp ", temp.toString() + "");
             listPets.add(temp);
-            c.move(i);
         }
 
         c.close();
