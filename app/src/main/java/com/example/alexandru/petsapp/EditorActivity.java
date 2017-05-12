@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.example.alexandru.dao.DbBasicOperations;
+import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact.PetEntry;
+import com.example.alexandru.data.PetDbHelper;
+import com.example.alexandru.model.Pet;
 
 public class EditorActivity extends AppCompatActivity {
 
@@ -43,6 +48,9 @@ public class EditorActivity extends AppCompatActivity {
     private int mGender = 0;
 
 
+    private PetDbHelper mDbHelper;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +63,7 @@ public class EditorActivity extends AppCompatActivity {
         mWeightEditText = (EditText) findViewById(R.id.edit_pet_weight);
         mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
 
+        mDbHelper = new PetDbHelper(this);
         setupSpinner();
 
     }
@@ -98,6 +107,25 @@ public class EditorActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Get the information and saves the pet
+     */
+
+    private void insertOrUpdate() {
+        Pet tempPet = new Pet();
+        tempPet.setName(mNameEditText.getText().toString().trim());
+        tempPet.setBreed(mBreedEditText.getText().toString().trim());
+        tempPet.setGender(mGender);
+        int tempWeight = Integer.parseInt(mWeightEditText.getText().toString().trim());
+        tempPet.setWeight(tempWeight);
+
+        DbBasicOperations<Pet> petOp = new PetsDaoImpl();
+
+        long newRowId = petOp.insertItemAndGetId(mDbHelper, tempPet);
+        Log.e("New row id ", newRowId + " ");
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -112,18 +140,20 @@ public class EditorActivity extends AppCompatActivity {
         // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
-            case R.id.action_save:
-                // Do nothing for now
+            case R.id.action_save: {
+                insertOrUpdate();
+                finish();
                 return true;
-            // Respond to a click on the "Delete" menu option
-            case R.id.action_delete:
-                // Do nothing for now
+            }
+
+            case R.id.action_delete: {
                 return true;
-            // Respond to a click on the "Up" arrow button in the app bar
-            case android.R.id.home:
-                // Navigate back to parent activity (CatalogActivity)
+            }
+
+            case android.R.id.home: {
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

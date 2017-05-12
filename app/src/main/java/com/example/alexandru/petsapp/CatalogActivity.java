@@ -19,10 +19,16 @@ import com.example.alexandru.model.Pet;
 
 public class CatalogActivity extends AppCompatActivity {
 
+    private PetDbHelper mDbHelper;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
+
 
         // Setup FAB to open EditorActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -34,22 +40,18 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
+        mDbHelper = new PetDbHelper(this);
         displayDatabaseInfo();
     }
 
     private void displayDatabaseInfo() {
 
-        PetDbHelper mDbHelper = new PetDbHelper(this);
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-
         Cursor cursor = db.rawQuery("SELECT * FROM " + PetContact.PetEntry.TABLE_NAME, null);
-
 
         Log.e("Column count ", cursor.getColumnCount() + " ");
         Log.e("Row count ", cursor.getCount() + " ");
-
 
     }
 
