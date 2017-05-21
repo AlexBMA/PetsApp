@@ -8,21 +8,23 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import com.example.alexandru.adapter.PetsAdapter;
 import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact;
 import com.example.alexandru.data.PetDbHelper;
 import com.example.alexandru.model.Pet;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity {
 
-    private PetDbHelper mDbHelper;
 
-
+    private ArrayAdapter<Pet> petArrayAdapter;
 
 
     @Override
@@ -41,7 +43,13 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
-        mDbHelper = new PetDbHelper(this);
+
+        ListView newsListView = (ListView) findViewById(R.id.list_pets);
+
+        petArrayAdapter = new PetsAdapter(getApplicationContext(), new ArrayList<Pet>());
+        newsListView.setAdapter(petArrayAdapter);
+
+
         displayDatabaseInfo();
     }
 
@@ -49,15 +57,9 @@ public class CatalogActivity extends AppCompatActivity {
 
 
         PetsDao<Pet> petsDao = new PetsDaoImpl();
-        List<Pet> list = petsDao.getAllItemsContentResolver(getContentResolver());
+        List<Pet> listPets = petsDao.getAllItemsContentResolver(getContentResolver());
 
-        TextView textView = (TextView) findViewById(R.id.text_view_pet);
-
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-
-            textView.append("\n" + list.get(i).toString());
-        }
+        petArrayAdapter.addAll(listPets);
 
 
         //dbOp.getItem(mDbHelper,1);
@@ -93,11 +95,12 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private void deleteAllPets() {
+
         PetsDao<Pet> petsDao = new PetsDaoImpl();
         getContentResolver().delete(PetContact.PetEntry.CONTENT_URI, null, null);
 
-        TextView textView = (TextView) findViewById(R.id.text_view_pet);
-        textView.setText("");
+        petArrayAdapter.clear();
+
     }
 
     private void insetPet() {
@@ -117,16 +120,10 @@ public class CatalogActivity extends AppCompatActivity {
 
         Log.e("New row id ", newRowId + " ");
 
-        List<Pet> list = petsDao.getAllItemsContentResolver(getContentResolver());
+        List<Pet> listPets = petsDao.getAllItemsContentResolver(getContentResolver());
 
-        TextView textView = (TextView) findViewById(R.id.text_view_pet);
-        textView.setText("");
-
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-
-            textView.append("\n" + list.get(i).toString());
-        }
+        petArrayAdapter.clear();
+        petArrayAdapter.addAll(listPets);
 
     }
 

@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".CatalogActivity">
 
+    <ListView
+        android:id="@+id/list_pets"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null">
+
+
+    </ListView>
+
     <TextView
         android:id="@+id/text_view_pet"
         android:layout_width="match_parent"
