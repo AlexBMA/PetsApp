@@ -1,9 +1,11 @@
 package com.example.alexandru.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,7 +55,27 @@ public class PetProvider extends ContentProvider {
 
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return null;
+
+        SQLiteDatabase database = mDbHelper.getReadableDatabase();
+
+        Cursor cursor;
+
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PETS:
+                cursor = database.query(PetContact.PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+            case PET_ID:
+                selection = PetContact.PetEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(PetContact.PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown uri" + uri);
+        }
+
+
+        return cursor;
     }
 
 
@@ -65,11 +87,48 @@ public class PetProvider extends ContentProvider {
 
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case PETS:
+                return insertPets(uri, values);
+
+            default:
+                throw new IllegalArgumentException("Cannot query unknown uri" + uri);
+        }
+
     }
+
+    private Uri insertPets(Uri uri, ContentValues values) {
+
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        long newId = db.insert(PetContact.PetEntry.TABLE_NAME, null, values);
+
+        return ContentUris.withAppendedId(uri, newId);
+    }
+
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+
+        SQLiteDatabase database = mDbHelper.getReadableDatabase();
+
+
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PETS:
+                database.delete(PetContact.PetEntry.TABLE_NAME, null, null);
+                break;
+            case PET_ID:
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown uri" + uri);
+        }
+
+
         return 0;
     }
 

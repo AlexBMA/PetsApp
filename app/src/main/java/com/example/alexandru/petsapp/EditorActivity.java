@@ -13,10 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.example.alexandru.dao.DbBasicOperations;
+import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact.PetEntry;
-import com.example.alexandru.data.PetDbHelper;
 import com.example.alexandru.model.Pet;
 
 public class EditorActivity extends AppCompatActivity {
@@ -48,7 +47,6 @@ public class EditorActivity extends AppCompatActivity {
     private int mGender = 0;
 
 
-    private PetDbHelper mDbHelper;
 
 
     @Override
@@ -63,7 +61,7 @@ public class EditorActivity extends AppCompatActivity {
         mWeightEditText = (EditText) findViewById(R.id.edit_pet_weight);
         mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
 
-        mDbHelper = new PetDbHelper(this);
+
         setupSpinner();
 
     }
@@ -119,9 +117,9 @@ public class EditorActivity extends AppCompatActivity {
         int tempWeight = Integer.parseInt(mWeightEditText.getText().toString().trim());
         tempPet.setWeight(tempWeight + (int) (Math.random() * 200));
 
-        DbBasicOperations<Pet> petOp = new PetsDaoImpl();
+        PetsDao<Pet> petsDao = new PetsDaoImpl();
 
-        long newRowId = petOp.insertItemAndGetId(mDbHelper, tempPet);
+        long newRowId = petsDao.insertItemAndGetIdWithContentResolver(getContentResolver(), tempPet);
         Log.e("New row id ", newRowId + " ");
 
     }

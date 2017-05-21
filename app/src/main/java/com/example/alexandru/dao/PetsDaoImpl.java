@@ -1,8 +1,10 @@
 package com.example.alexandru.dao;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.alexandru.data.PetContact;
@@ -45,7 +47,6 @@ public class PetsDaoImpl implements PetsDao<Pet> {
 
         // Issue SQL statement.
         db.delete(PetContact.PetEntry.TABLE_NAME, selection, selectionArgs);
-
 
 
     }
@@ -106,6 +107,7 @@ public class PetsDaoImpl implements PetsDao<Pet> {
 
         List<Pet> listPets = new ArrayList<>();
 
+
         Cursor c = db.query(PetContact.PetEntry.TABLE_NAME, null, null, null, null, null, null);
 
         int size = c.getCount();
@@ -154,4 +156,69 @@ public class PetsDaoImpl implements PetsDao<Pet> {
         setDataForInsert(item, values);
     }
 
+    @Override
+    public long insertItemAndGetIdWithContentResolver(ContentResolver contentResolver, Pet item) {
+
+        // New value for one column
+        ContentValues values = new ContentValues();
+        setDataForUpdate(item, values);
+
+        Uri uri = contentResolver.insert(PetContact.PetEntry.CONTENT_URI, values);
+
+
+        int newId = Integer.parseInt(uri.getLastPathSegment().trim());
+        return newId;
+    }
+
+    @Override
+    public void deleteItemWithContentResolver(ContentResolver contentResolver, long id) {
+
+    }
+
+    @Override
+    public void updateItemWithContentResolver(ContentResolver contentResolver, long id, Pet item) {
+
+    }
+
+    @Override
+    public Pet getItemWithContentResolver(ContentResolver contentResolver, long id) {
+        return null;
+    }
+
+    @Override
+    public List<Pet> getAllItemsContentResolver(ContentResolver contentResolver) {
+
+
+        String[] projection = {
+                PetContact.PetEntry._ID,
+                PetContact.PetEntry.COLUMN_PET_NAME,
+                PetContact.PetEntry.COLUMN_PET_BREED,
+                PetContact.PetEntry.COLUMN_PET_WEIGHT,
+                PetContact.PetEntry.COLUMN_PET_GENDER
+        };
+
+
+        Cursor c = contentResolver.query(PetContact.PetEntry.CONTENT_URI, projection, null, null, null);
+
+        List<Pet> listPets = new ArrayList<>();
+
+        int size = c.getCount();
+        Pet temp;
+
+        for (int i = 0; i < size; i++) {
+
+            c.moveToPosition(i);
+            temp = new Pet();
+            putDataInObject(c, temp);
+            Log.e(" temp ", temp.toString() + "");
+            listPets.add(temp);
+        }
+
+        c.close();
+
+
+        return listPets;
+    }
 }
+
+

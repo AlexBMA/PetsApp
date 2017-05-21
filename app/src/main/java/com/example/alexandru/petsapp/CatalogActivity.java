@@ -10,8 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.alexandru.dao.DbBasicOperations;
+import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
+import com.example.alexandru.data.PetContact;
 import com.example.alexandru.data.PetDbHelper;
 import com.example.alexandru.model.Pet;
 
@@ -47,14 +48,13 @@ public class CatalogActivity extends AppCompatActivity {
     private void displayDatabaseInfo() {
 
 
-        DbBasicOperations<Pet> dbOp = new PetsDaoImpl();
-        List<Pet> list = dbOp.getAllItems(mDbHelper);
+        PetsDao<Pet> petsDao = new PetsDaoImpl();
+        List<Pet> list = petsDao.getAllItemsContentResolver(getContentResolver());
 
         TextView textView = (TextView) findViewById(R.id.text_view_pet);
 
         int size = list.size();
         for (int i = 0; i < size; i++) {
-
 
             textView.append("\n" + list.get(i).toString());
         }
@@ -84,11 +84,20 @@ public class CatalogActivity extends AppCompatActivity {
             }
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries: {
+                deleteAllPets();
                 return true;
             }
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteAllPets() {
+        PetsDao<Pet> petsDao = new PetsDaoImpl();
+        getContentResolver().delete(PetContact.PetEntry.CONTENT_URI, null, null);
+
+        TextView textView = (TextView) findViewById(R.id.text_view_pet);
+        textView.setText("");
     }
 
     private void insetPet() {
@@ -102,11 +111,22 @@ public class CatalogActivity extends AppCompatActivity {
         tempPet.setGender(1);
 
 
-        DbBasicOperations<Pet> petsOP = new PetsDaoImpl();
+        PetsDao<Pet> petsDao = new PetsDaoImpl();
         PetDbHelper mDbHelper = new PetDbHelper(this);
-        long newRowId = petsOP.insertItemAndGetId(mDbHelper, tempPet);
+        long newRowId = petsDao.insertItemAndGetId(mDbHelper, tempPet);
 
         Log.e("New row id ", newRowId + " ");
+
+        List<Pet> list = petsDao.getAllItemsContentResolver(getContentResolver());
+
+        TextView textView = (TextView) findViewById(R.id.text_view_pet);
+        textView.setText("");
+
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+
+            textView.append("\n" + list.get(i).toString());
+        }
 
     }
 
