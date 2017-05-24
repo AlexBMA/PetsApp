@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by Alexandru on 5/20/2017.
@@ -103,10 +104,36 @@ public class PetProvider extends ContentProvider {
     private Uri insertPets(Uri uri, ContentValues values) {
 
 
+        String name = values.getAsString(PetContact.PetEntry.COLUMN_PET_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        String breed = values.getAsString(PetContact.PetEntry.COLUMN_PET_BREED);
+        if (breed == null) {
+            throw new IllegalArgumentException("Pet requires a breed");
+        }
+
+        Integer weight = values.getAsInteger(PetContact.PetEntry.COLUMN_PET_WEIGHT);
+        if (weight == null || weight < 0) {
+            throw new IllegalArgumentException("Pet requires a valid weight");
+        }
+
+        Integer gender = values.getAsInteger(PetContact.PetEntry.COLUMN_PET_GENDER);
+        if (gender == null || PetContact.PetEntry.isValidGender(gender)) {
+            throw new IllegalArgumentException("Pet requires a valid  gender");
+        }
+
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         long newId = db.insert(PetContact.PetEntry.TABLE_NAME, null, values);
 
+        if (newId == -1) {
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
+        // Return the new URI with the ID (of the newly inserted row) appended at the end
         return ContentUris.withAppendedId(uri, newId);
     }
 
@@ -115,25 +142,102 @@ public class PetProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 
         SQLiteDatabase database = mDbHelper.getReadableDatabase();
-
-
         int match = sUriMatcher.match(uri);
+
         switch (match) {
             case PETS:
-                database.delete(PetContact.PetEntry.TABLE_NAME, null, null);
-                break;
+                return database.delete(PetContact.PetEntry.TABLE_NAME, null, null);
+
             case PET_ID:
-                break;
+                // Delete a single row given by the ID in the URI
+                selection = PetContact.PetEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return database.delete(PetContact.PetEntry.TABLE_NAME, selection, selectionArgs);
+
             default:
-                throw new IllegalArgumentException("Cannot query unknown uri" + uri);
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
 
-
-        return 0;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        String name = values.getAsString(PetContact.PetEntry.COLUMN_PET_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        String breed = values.getAsString(PetContact.PetEntry.COLUMN_PET_BREED);
+        if (breed == null) {
+            throw new IllegalArgumentException("Pet requires a breed");
+        }
+
+        Integer weight = values.getAsInteger(PetContact.PetEntry.COLUMN_PET_WEIGHT);
+        if (weight == null || weight < 0) {
+            throw new IllegalArgumentException("Pet requires a valid weight");
+        }
+
+        Integer gender = values.getAsInteger(PetContact.PetEntry.COLUMN_PET_GENDER);
+        if (gender == null || PetContact.PetEntry.isValidGender(gender)) {
+            throw new IllegalArgumentException("Pet requires a valid  gender");
+        }
+
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case PETS:
+                return updatePet(uri, values, selection, selectionArgs);
+            case PET_ID:
+                // For the PET_ID code, extract out the ID from the URI,
+                // so we know which row to update. Selection will be "_id=?" and selection
+                // arguments will be a String array containing the actual ID.
+                selection = PetContact.PetEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updatePet(uri, values, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
+
+
+    }
+
+
+    /**
+     * Update pets in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more pets).
+     * Return the number of rows that were successfully updated.
+     */
+    private int updatePet(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+
+        String name = values.getAsString(PetContact.PetEntry.COLUMN_PET_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        String breed = values.getAsString(PetContact.PetEntry.COLUMN_PET_BREED);
+        if (breed == null) {
+            throw new IllegalArgumentException("Pet requires a breed");
+        }
+
+        Integer weight = values.getAsInteger(PetContact.PetEntry.COLUMN_PET_WEIGHT);
+        if (weight == null || weight < 0) {
+            throw new IllegalArgumentException("Pet requires a valid weight");
+        }
+
+        Integer gender = values.getAsInteger(PetContact.PetEntry.COLUMN_PET_GENDER);
+        if (gender == null || PetContact.PetEntry.isValidGender(gender)) {
+            throw new IllegalArgumentException("Pet requires a valid  gender");
+        }
+
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        SQLiteDatabase database = mDbHelper.getWritableDatabase();
+        int nrRows = database.update(PetContact.PetEntry.TABLE_NAME, values, selection, selectionArgs);
+
+
+        return nrRows;
     }
 }

@@ -21,7 +21,7 @@ public final class PetContact {
         public static final String COLUMN_PET_NAME = "name";
         public static final String COLUMN_PET_BREED = "breed";
         public static final String COLUMN_PET_WEIGHT = "weight";
-        public static final String COLUMN_PET_GENDER = "in_stock";
+        public static final String COLUMN_PET_GENDER = "gender";
 
         /**
          * Possible values for the style of the headphone.
@@ -34,6 +34,15 @@ public final class PetContact {
 
 
         private static final String CREATE_TABLE = "";
+
+
+        public static boolean isValidGender(Integer gender) {
+
+            if (gender == GENDER_UNKNOWN || gender == GENDER_MALE || gender == GENDER_FEMALE) {
+                return true;
+            }
+            return false;
+        }
 
     }
 }
