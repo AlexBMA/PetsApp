@@ -107,8 +107,7 @@ public class PetsDaoImpl implements PetsDao<Pet> {
 
         List<Pet> listPets = new ArrayList<>();
 
-
-        Cursor c = db.query(PetContact.PetEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor c = db.query(PetContact.PetEntry.TABLE_NAME, projection, null, null, null, null, null);
 
         int size = c.getCount();
         Pet temp;
