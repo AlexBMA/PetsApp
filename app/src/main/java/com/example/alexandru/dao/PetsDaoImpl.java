@@ -173,10 +173,22 @@ public class PetsDaoImpl implements PetsDao<Pet> {
     @Override
     public void deleteItemWithContentResolver(ContentResolver contentResolver, long id) {
 
+        String selection = PetContact.PetEntry._ID + " = ?";
+        String[] selectionArgs = {id + ""};
+
+        contentResolver.delete(PetContact.PetEntry.CONTENT_URI, selection, selectionArgs);
     }
 
     @Override
     public void updateItemWithContentResolver(ContentResolver contentResolver, long id, Pet item) {
+
+        ContentValues values = new ContentValues();
+        setDataForUpdate(item, values);
+
+        String selection = PetContact.PetEntry._ID + " = ?";
+        String[] selectionArgs = {id + ""};
+
+        contentResolver.update(PetContact.PetEntry.CONTENT_URI, values, selection, selectionArgs);
 
     }
 

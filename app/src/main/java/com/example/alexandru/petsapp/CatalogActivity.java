@@ -96,7 +96,8 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void deleteAllPets() {
 
-        PetsDao<Pet> petsDao = new PetsDaoImpl();
+        // PetsDao<Pet> petsDao = new PetsDaoImpl();
+        // petsDao.deleteItemWithContentResolver(getContentResolver(),);
         getContentResolver().delete(PetContact.PetEntry.CONTENT_URI, null, null);
 
         petArrayAdapter.clear();
