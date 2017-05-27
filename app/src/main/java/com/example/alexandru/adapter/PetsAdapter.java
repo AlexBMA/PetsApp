@@ -33,15 +33,15 @@ public class PetsAdapter extends ArrayAdapter<Pet> {
 
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.pet_item, parent, false);
+                    R.layout.item_pet, parent, false);
         }
 
         Pet tempPet = getItem(position);
 
-        TextView textViewName = (TextView) listItemView.findViewById(R.id.name_text_view);
+        TextView textViewName = (TextView) listItemView.findViewById(R.id.name);
         textViewName.setText(tempPet.getName());
 
-        TextView textViewBreed = (TextView) listItemView.findViewById(R.id.breed_text_view);
+        TextView textViewBreed = (TextView) listItemView.findViewById(R.id.summary);
         textViewBreed.setText(tempPet.getBreed());
 
 
