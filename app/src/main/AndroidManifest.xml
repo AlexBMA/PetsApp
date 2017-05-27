@@ -34,6 +34,7 @@
         <provider
             android:name="com.example.alexandru.data.PetProvider"
             android:authorities="com.example.alexandru.data.PetProvider"
+            android:enabled="true"
             android:exported="false" />
 
     </application>

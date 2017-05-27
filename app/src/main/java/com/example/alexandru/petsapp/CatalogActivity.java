@@ -1,6 +1,7 @@
 package com.example.alexandru.petsapp;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -8,24 +9,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.alexandru.adapter.PetsAdapter;
+import com.example.alexandru.adapter.PetCursorAdapter;
 import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact;
-import com.example.alexandru.data.PetDbHelper;
 import com.example.alexandru.model.Pet;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CatalogActivity extends AppCompatActivity {
 
 
-    private ArrayAdapter<Pet> petArrayAdapter;
+    //private ArrayAdapter<Pet> petArrayAdapter;
 
+    private PetCursorAdapter petCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +40,12 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
-
+/*
         ListView newsListView = (ListView) findViewById(R.id.list_pets);
 
         petArrayAdapter = new PetsAdapter(getApplicationContext(), new ArrayList<Pet>());
         newsListView.setAdapter(petArrayAdapter);
-
+*/
 
         displayDatabaseInfo();
     }
@@ -57,10 +54,33 @@ public class CatalogActivity extends AppCompatActivity {
 
 
         PetsDao<Pet> petsDao = new PetsDaoImpl();
+
+        Cursor res = petsDao.getAllItemsContentResolver(getContentResolver());
+
+        petCursorAdapter = new PetCursorAdapter(this, res);
+
+        ListView lvPets = (ListView) findViewById(R.id.list_pets);
+
+        lvPets.setAdapter(petCursorAdapter);
+
+
+        Log.e("count", "" + lvPets.getCount());
+        if (lvPets.getCount() == 0) {
+            Log.e("here", " here");
+
+            // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+            View emptyView = findViewById(R.id.empty_view);
+            lvPets.setEmptyView(emptyView);
+        }
+
+
+
+
+     /*   PetsDao<Pet> petsDao = new PetsDaoImpl();
         List<Pet> listPets = petsDao.getAllItemsContentResolver(getContentResolver());
 
         petArrayAdapter.addAll(listPets);
-
+    */
 
         //dbOp.getItem(mDbHelper,1);
     }
@@ -100,7 +120,7 @@ public class CatalogActivity extends AppCompatActivity {
         // petsDao.deleteItemWithContentResolver(getContentResolver(),);
         getContentResolver().delete(PetContact.PetEntry.CONTENT_URI, null, null);
 
-        petArrayAdapter.clear();
+        // petArrayAdapter.clear();
 
     }
 
@@ -108,23 +128,13 @@ public class CatalogActivity extends AppCompatActivity {
 
         Pet tempPet = new Pet();
 
-
         tempPet.setBreed("Terrier");
         tempPet.setName("Toto");
         tempPet.setWeight(12 + (int) (Math.random() * 200));
         tempPet.setGender(1);
 
-
         PetsDao<Pet> petsDao = new PetsDaoImpl();
-        PetDbHelper mDbHelper = new PetDbHelper(this);
-        long newRowId = petsDao.insertItemAndGetId(mDbHelper, tempPet);
-
-        Log.e("New row id ", newRowId + " ");
-
-        List<Pet> listPets = petsDao.getAllItemsContentResolver(getContentResolver());
-
-        petArrayAdapter.clear();
-        petArrayAdapter.addAll(listPets);
+        petsDao.insertItemAndGetIdWithContentResolver(getContentResolver(), tempPet);
 
     }
 

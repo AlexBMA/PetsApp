@@ -49,7 +49,7 @@ public class PetCursorAdapter extends CursorAdapter {
     private String constructSummary(String breed, int gender, int weight) {
         String genderText = translateGender(gender);
 
-        String summary = breed + " " + genderText + " " + weight;
+        String summary = breed + " " + genderText + " " + weight + " kg";
 
         return summary;
     }

@@ -105,6 +105,7 @@ public class PetsDaoImpl implements PetsDao<Pet> {
         };
 
 
+
         List<Pet> listPets = new ArrayList<>();
 
         Cursor c = db.query(PetContact.PetEntry.TABLE_NAME, projection, null, null, null, null, null);
@@ -197,7 +198,7 @@ public class PetsDaoImpl implements PetsDao<Pet> {
     }
 
     @Override
-    public List<Pet> getAllItemsContentResolver(ContentResolver contentResolver) {
+    public Cursor getAllItemsContentResolver(ContentResolver contentResolver) {
 
 
         String[] projection = {
@@ -211,24 +212,7 @@ public class PetsDaoImpl implements PetsDao<Pet> {
 
         Cursor c = contentResolver.query(PetContact.PetEntry.CONTENT_URI, projection, null, null, null);
 
-        List<Pet> listPets = new ArrayList<>();
-
-        int size = c.getCount();
-        Pet temp;
-
-        for (int i = 0; i < size; i++) {
-
-            c.moveToPosition(i);
-            temp = new Pet();
-            putDataInObject(c, temp);
-            Log.e(" temp ", temp.toString() + "");
-            listPets.add(temp);
-        }
-
-        c.close();
-
-
-        return listPets;
+        return c;
     }
 }
 

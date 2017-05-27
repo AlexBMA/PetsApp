@@ -129,7 +129,7 @@ public class PetProvider extends ContentProvider {
         }
 
         Integer gender = values.getAsInteger(PetContact.PetEntry.COLUMN_PET_GENDER);
-        if (gender == null || PetContact.PetEntry.isValidGender(gender)) {
+        if (gender == null || !PetContact.PetEntry.isValidGender(gender)) {
             throw new IllegalArgumentException("Pet requires a valid  gender");
         }
 
