@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +21,7 @@ public class CatalogActivity extends AppCompatActivity {
 
     //private ArrayAdapter<Pet> petArrayAdapter;
 
-    private PetCursorAdapter petCursorAdapter;
+    //private PetCursorAdapter petCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +45,16 @@ public class CatalogActivity extends AppCompatActivity {
         petArrayAdapter = new PetsAdapter(getApplicationContext(), new ArrayList<Pet>());
         newsListView.setAdapter(petArrayAdapter);
 */
+        ListView lvPets = (ListView) findViewById(R.id.list_pets);
 
+        View emptyView = findViewById(R.id.empty_view);
+        lvPets.setEmptyView(emptyView);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         displayDatabaseInfo();
     }
 
@@ -57,21 +65,11 @@ public class CatalogActivity extends AppCompatActivity {
 
         Cursor res = petsDao.getAllItemsContentResolver(getContentResolver());
 
-        petCursorAdapter = new PetCursorAdapter(this, res);
+        PetCursorAdapter petCursorAdapter = new PetCursorAdapter(this, res);
 
         ListView lvPets = (ListView) findViewById(R.id.list_pets);
 
         lvPets.setAdapter(petCursorAdapter);
-
-
-        Log.e("count", "" + lvPets.getCount());
-        if (lvPets.getCount() == 0) {
-            Log.e("here", " here");
-
-            // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
-            View emptyView = findViewById(R.id.empty_view);
-            lvPets.setEmptyView(emptyView);
-        }
 
 
 
