@@ -22,12 +22,11 @@ import com.example.alexandru.model.Pet;
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    //private ArrayAdapter<Pet> petArrayAdapter;
-
     // These are the Contacts rows that we will retrieve
-    static final String[] PROJECTION = null;
+    private static final String[] PROJECTION = null;
     // This is the select criteria
-    static final String SELECTION = null;
+    private static final String SELECTION = null;
+
     private final int LOADER_INDEX = 0;
     private PetCursorAdapter petCursorAdapter;
 
@@ -47,54 +46,23 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-/*
-        ListView newsListView = (ListView) findViewById(R.id.list_pets);
 
-        petArrayAdapter = new PetsAdapter(getApplicationContext(), new ArrayList<Pet>());
-        newsListView.setAdapter(petArrayAdapter);
-*/
         ListView lvPets = (ListView) findViewById(R.id.list_pets);
-
 
         petCursorAdapter = new PetCursorAdapter(this, null);
         lvPets.setAdapter(petCursorAdapter);
 
-        getLoaderManager().initLoader(LOADER_INDEX, null, this);
-
         View emptyView = findViewById(R.id.empty_view);
         lvPets.setEmptyView(emptyView);
+
+        getLoaderManager().initLoader(LOADER_INDEX, null, this);
+
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //displayDatabaseInfo();
-    }
-
-    private void displayDatabaseInfo() {
-
-
-        PetsDao<Pet> petsDao = new PetsDaoImpl();
-
-        Cursor res = petsDao.getAllItemsContentResolver(getContentResolver());
-
-        PetCursorAdapter petCursorAdapter = new PetCursorAdapter(this, res);
-
-        ListView lvPets = (ListView) findViewById(R.id.list_pets);
-
-        lvPets.setAdapter(petCursorAdapter);
-
-
-
-
-     /*   PetsDao<Pet> petsDao = new PetsDaoImpl();
-        List<Pet> listPets = petsDao.getAllItemsContentResolver(getContentResolver());
-
-        petArrayAdapter.addAll(listPets);
-    */
-
-        //dbOp.getItem(mDbHelper,1);
     }
 
 
@@ -128,11 +96,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     private void deleteAllPets() {
 
-        // PetsDao<Pet> petsDao = new PetsDaoImpl();
-        // petsDao.deleteItemWithContentResolver(getContentResolver(),);
         getContentResolver().delete(PetContact.PetEntry.CONTENT_URI, null, null);
-
-        // petArrayAdapter.clear();
 
     }
 
