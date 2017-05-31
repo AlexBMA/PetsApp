@@ -1,6 +1,9 @@
 package com.example.alexandru.petsapp;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,12 +19,17 @@ import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact;
 import com.example.alexandru.model.Pet;
 
-public class CatalogActivity extends AppCompatActivity {
+public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
     //private ArrayAdapter<Pet> petArrayAdapter;
 
-    //private PetCursorAdapter petCursorAdapter;
+    // These are the Contacts rows that we will retrieve
+    static final String[] PROJECTION = null;
+    // This is the select criteria
+    static final String SELECTION = null;
+    private final int LOADER_INDEX = 0;
+    private PetCursorAdapter petCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,12 @@ public class CatalogActivity extends AppCompatActivity {
 */
         ListView lvPets = (ListView) findViewById(R.id.list_pets);
 
+
+        petCursorAdapter = new PetCursorAdapter(this, null);
+        lvPets.setAdapter(petCursorAdapter);
+
+        getLoaderManager().initLoader(LOADER_INDEX, null, this);
+
         View emptyView = findViewById(R.id.empty_view);
         lvPets.setEmptyView(emptyView);
 
@@ -55,7 +69,7 @@ public class CatalogActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        displayDatabaseInfo();
+        //displayDatabaseInfo();
     }
 
     private void displayDatabaseInfo() {
@@ -126,10 +140,11 @@ public class CatalogActivity extends AppCompatActivity {
 
         Pet tempPet = new Pet();
 
-        tempPet.setBreed("Terrier");
-        tempPet.setName("Toto");
+
         tempPet.setWeight(12 + (int) (Math.random() * 200));
         tempPet.setGender(1);
+        tempPet.setBreed("Terrier");
+        tempPet.setName("Toto");
 
         PetsDao<Pet> petsDao = new PetsDaoImpl();
         petsDao.insertItemAndGetIdWithContentResolver(getContentResolver(), tempPet);
@@ -137,4 +152,26 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        // PetsDao<Pet> petsDao = new PetsDaoImpl();
+        // Cursor res = petsDao.getAllItemsContentResolver(getContentResolver());
+
+        // petCursorAdapter  = new PetCursorAdapter(this, res);
+
+
+        return new CursorLoader(this, PetContact.PetEntry.CONTENT_URI, PROJECTION, SELECTION, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        petCursorAdapter.swapCursor(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        petCursorAdapter.swapCursor(null);
+    }
 }
