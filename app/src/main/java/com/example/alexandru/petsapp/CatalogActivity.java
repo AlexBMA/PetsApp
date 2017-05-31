@@ -96,7 +96,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     private void deleteAllPets() {
 
-        getContentResolver().delete(PetContact.PetEntry.CONTENT_URI, null, null);
+        PetsDao<Pet> petsDao = new PetsDaoImpl();
+        petsDao.deleteAllItemWithContentResolver(getContentResolver());
 
     }
 

@@ -158,13 +158,19 @@ public class PetProvider extends ContentProvider {
 
         switch (match) {
             case PETS:
-                return database.delete(PetContact.PetEntry.TABLE_NAME, null, null);
+
+                int rezDeleteAll = database.delete(PetContact.PetEntry.TABLE_NAME, null, null);
+                if (rezDeleteAll != 0) getContext().getContentResolver().notifyChange(uri, null);
+                return rezDeleteAll;
 
             case PET_ID:
                 // Delete a single row given by the ID in the URI
                 selection = PetContact.PetEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return database.delete(PetContact.PetEntry.TABLE_NAME, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(uri, null);
+                int rezOfDeleteById = database.delete(PetContact.PetEntry.TABLE_NAME, selection, selectionArgs);
+                if (rezOfDeleteById != 0) getContext().getContentResolver().notifyChange(uri, null);
+                return rezOfDeleteById;
 
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
@@ -249,6 +255,7 @@ public class PetProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
         int nrRows = database.update(PetContact.PetEntry.TABLE_NAME, values, selection, selectionArgs);
 
+        if (nrRows != 0) getContext().getContentResolver().notifyChange(uri, null);
 
         return nrRows;
     }

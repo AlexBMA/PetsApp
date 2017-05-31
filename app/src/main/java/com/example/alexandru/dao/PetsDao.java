@@ -20,4 +20,6 @@ public interface PetsDao<E> extends DbBasicOperations<E> {
 
     Cursor getAllItemsContentResolver(ContentResolver contentResolver);
 
+    void deleteAllItemWithContentResolver(ContentResolver contentResolver);
+
 }

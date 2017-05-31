@@ -214,6 +214,12 @@ public class PetsDaoImpl implements PetsDao<Pet> {
 
         return c;
     }
+
+    @Override
+    public void deleteAllItemWithContentResolver(ContentResolver contentResolver) {
+
+        contentResolver.delete(PetContact.PetEntry.CONTENT_URI, null, null);
+    }
 }
 
 
