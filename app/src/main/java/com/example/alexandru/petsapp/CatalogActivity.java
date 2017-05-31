@@ -49,11 +49,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
         ListView lvPets = (ListView) findViewById(R.id.list_pets);
 
-        petCursorAdapter = new PetCursorAdapter(this, null);
-        lvPets.setAdapter(petCursorAdapter);
-
         View emptyView = findViewById(R.id.empty_view);
         lvPets.setEmptyView(emptyView);
+
+        petCursorAdapter = new PetCursorAdapter(this, null);
+        lvPets.setAdapter(petCursorAdapter);
 
         getLoaderManager().initLoader(LOADER_INDEX, null, this);
 
