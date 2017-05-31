@@ -193,8 +193,14 @@ public class PetsDaoImpl implements PetsDao<Pet> {
     }
 
     @Override
-    public Pet getItemWithContentResolver(ContentResolver contentResolver, long id) {
-        return null;
+    public Cursor getItemWithContentResolver(ContentResolver contentResolver, long id) {
+
+        String selection = PetContact.PetEntry._ID + " = ?";
+        String[] selectionArgs = {id + " "};
+
+        Cursor c = contentResolver.query(PetContact.PetEntry.CONTENT_URI, null, selection, selectionArgs, null, null);
+
+        return c;
     }
 
     @Override

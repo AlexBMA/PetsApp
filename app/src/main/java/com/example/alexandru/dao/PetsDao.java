@@ -16,7 +16,7 @@ public interface PetsDao<E> extends DbBasicOperations<E> {
 
     void updateItemWithContentResolver(ContentResolver contentResolver, long id, E item);
 
-    E getItemWithContentResolver(ContentResolver contentResolver, long id);
+    Cursor getItemWithContentResolver(ContentResolver contentResolver, long id);
 
     Cursor getAllItemsContentResolver(ContentResolver contentResolver);
 

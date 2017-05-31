@@ -1,5 +1,7 @@
 package com.example.alexandru.petsapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,10 @@ import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact.PetEntry;
 import com.example.alexandru.model.Pet;
+
+import static com.example.alexandru.data.ConstantsClass.EDITOR_ACTIVITY_TITLE;
+import static com.example.alexandru.data.ConstantsClass.ID;
+import static com.example.alexandru.data.ConstantsClass.URI_FOR_EDIT;
 
 public class EditorActivity extends AppCompatActivity {
 
@@ -53,6 +59,22 @@ public class EditorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+
+
+        Intent parent = getIntent();
+        String title = parent.getStringExtra(EDITOR_ACTIVITY_TITLE);
+        long id = parent.getLongExtra(ID, -1);
+        Uri editUri = Uri.parse(parent.getStringExtra(URI_FOR_EDIT));
+
+      /*  Log.e(POSITION,""+position);
+          Log.e(ID,""+id);
+          Log.e(URI_FOR_EDIT,editUri.toString());
+        */
+        setTitle(title);
+
+        PetsDao<Pet> petsDao = new PetsDaoImpl();
+
+
 
 
         // Find all relevant views that we will need to read user input from

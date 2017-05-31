@@ -5,17 +5,20 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.alexandru.adapter.PetCursorAdapter;
 import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
+import com.example.alexandru.data.ConstantsClass;
 import com.example.alexandru.data.PetContact;
 import com.example.alexandru.model.Pet;
 
@@ -43,6 +46,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             public void onClick(View view) {
                 Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
                 startActivity(intent);
+
             }
         });
 
@@ -54,6 +58,21 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
         petCursorAdapter = new PetCursorAdapter(this, null);
         lvPets.setAdapter(petCursorAdapter);
+
+        lvPets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+
+                //Uri editUri = PetContact.PetEntry.CONTENT_URI;
+                Uri editUri = Uri.withAppendedPath(PetContact.PetEntry.CONTENT_URI, id + "");
+                intent.putExtra(ConstantsClass.URI_FOR_EDIT, editUri.toString());
+                intent.putExtra(ConstantsClass.EDITOR_ACTIVITY_TITLE, ConstantsClass.EDIT_MODE);
+                intent.putExtra(ConstantsClass.ID, id);
+
+                startActivity(intent);
+            }
+        });
 
         getLoaderManager().initLoader(LOADER_INDEX, null, this);
 
