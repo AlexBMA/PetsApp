@@ -18,7 +18,6 @@ import android.widget.ListView;
 import com.example.alexandru.adapter.PetCursorAdapter;
 import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
-import com.example.alexandru.data.ConstantsClass;
 import com.example.alexandru.data.PetContact;
 import com.example.alexandru.model.Pet;
 
@@ -66,10 +65,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
                 //Uri editUri = PetContact.PetEntry.CONTENT_URI;
                 Uri editUri = Uri.withAppendedPath(PetContact.PetEntry.CONTENT_URI, id + "");
-                intent.putExtra(ConstantsClass.URI_FOR_EDIT, editUri.toString());
-                intent.putExtra(ConstantsClass.EDITOR_ACTIVITY_TITLE, ConstantsClass.EDIT_MODE);
-                intent.putExtra(ConstantsClass.ID, id);
-
+                intent.setData(editUri);
                 startActivity(intent);
             }
         });

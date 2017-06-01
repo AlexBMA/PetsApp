@@ -7,7 +7,6 @@ package com.example.alexandru.data;
 public final class ConstantsClass {
 
     public static String EDITOR_ACTIVITY_TITLE = "title";
-    public static String EDIT_MODE = "Edit pet";
     public static String POSITION = "position";
     public static String ID = "id";
     public static String URI_FOR_EDIT = "edituri";

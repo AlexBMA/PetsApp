@@ -1,6 +1,10 @@
 package com.example.alexandru.petsapp;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -20,40 +24,35 @@ import com.example.alexandru.dao.PetsDaoImpl;
 import com.example.alexandru.data.PetContact.PetEntry;
 import com.example.alexandru.model.Pet;
 
-import static com.example.alexandru.data.ConstantsClass.EDITOR_ACTIVITY_TITLE;
-import static com.example.alexandru.data.ConstantsClass.ID;
-import static com.example.alexandru.data.ConstantsClass.URI_FOR_EDIT;
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-public class EditorActivity extends AppCompatActivity {
-
+    // These are the Contacts rows that we will retrieve
+    private static final String[] PROJECTION = null;
+    // This is the select criteria
+    private static final String SELECTION = null;
+    private final int LOADER_INDEX = 1;
     /**
      * EditText field to enter the pet's name
      */
     private EditText mNameEditText;
-
     /**
      * EditText field to enter the pet's breed
      */
     private EditText mBreedEditText;
-
     /**
      * EditText field to enter the pet's weight
      */
     private EditText mWeightEditText;
-
     /**
      * EditText field to enter the pet's gender
      */
     private Spinner mGenderSpinner;
-
     /**
      * Gender of the pet. The possible values are:
      * 0 for unknown gender, 1 for male, 2 for female.
      */
     private int mGender = 0;
-
-
-
+    private Uri dataUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +61,12 @@ public class EditorActivity extends AppCompatActivity {
 
 
         Intent parent = getIntent();
-        String title = parent.getStringExtra(EDITOR_ACTIVITY_TITLE);
-        long id = parent.getLongExtra(ID, -1);
-        Uri editUri = Uri.parse(parent.getStringExtra(URI_FOR_EDIT));
-
-      /*  Log.e(POSITION,""+position);
-          Log.e(ID,""+id);
-          Log.e(URI_FOR_EDIT,editUri.toString());
-        */
-        setTitle(title);
-
-        PetsDao<Pet> petsDao = new PetsDaoImpl();
+        dataUri = parent.getData();
+        if (dataUri != null) {
+            setTitle(R.string.edit_mode);
+        } else {
+            setTitle(R.string.add_mode);
+        }
 
 
 
@@ -85,6 +79,8 @@ public class EditorActivity extends AppCompatActivity {
 
 
         setupSpinner();
+
+        getLoaderManager().initLoader(LOADER_INDEX, null, this);
 
     }
 
@@ -178,4 +174,44 @@ public class EditorActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        if (dataUri != null)
+            return new CursorLoader(this, dataUri, PROJECTION, SELECTION, null, null);
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        data.moveToFirst();
+        mNameEditText.setText(data.getString(data.getColumnIndex(PetEntry.COLUMN_PET_NAME)));
+        mBreedEditText.setText(data.getString(data.getColumnIndex(PetEntry.COLUMN_PET_BREED)));
+        mWeightEditText.setText(data.getInt(data.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT)) + "");
+
+
+        int gender = data.getInt(data.getColumnIndex(PetEntry.COLUMN_PET_GENDER));
+
+
+        switch (gender) {
+            case PetEntry.GENDER_MALE:
+                mGenderSpinner.setSelection(1);
+                break;
+            case PetEntry.GENDER_FEMALE:
+                mGenderSpinner.setSelection(2);
+                break;
+            default:
+                mGenderSpinner.setSelection(0);
+                break;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+        mBreedEditText.clearComposingText();
+        mNameEditText.clearComposingText();
+        mWeightEditText.clearComposingText();
+    }
 }

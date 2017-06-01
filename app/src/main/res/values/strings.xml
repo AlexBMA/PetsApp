@@ -1,4 +1,9 @@
 <resources>
+
+    <string name="add_mode">Add a pet</string>
+
+    <string name="edit_mode">Edit pet</string>
+
     <!-- Name for the application [CHAR LIMIT=12] -->
     <string name="app_name">Pets</string>
 
