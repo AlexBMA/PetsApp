@@ -24,6 +24,8 @@ import com.example.alexandru.data.ConstantsClass;
 import com.example.alexandru.data.PetContact.PetEntry;
 import com.example.alexandru.model.Pet;
 
+import static android.text.TextUtils.isEmpty;
+
 public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     // These are the Contacts rows that we will retrieve
@@ -103,7 +105,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selection = (String) parent.getItemAtPosition(position);
-                if (!TextUtils.isEmpty(selection)) {
+                if (!isEmpty(selection)) {
                     if (selection.equals(getString(R.string.gender_male))) {
                         mGender = PetEntry.GENDER_MALE; // Male
                     } else if (selection.equals(getString(R.string.gender_female))) {
@@ -129,21 +131,34 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private void insertOrUpdate() {
         Pet tempPet = new Pet();
 
-        Intent intent = getIntent();
-        tempPet.setGender(mGender);
-        tempPet.setName(mNameEditText.getText().toString().trim());
-        tempPet.setBreed(mBreedEditText.getText().toString().trim());
-        int tempWeight = Integer.parseInt(mWeightEditText.getText().toString().trim());
-        tempPet.setWeight(tempWeight);
+        String name = mNameEditText.getText().toString().trim();
+        String breed = mBreedEditText.getText().toString().trim();
+        String weight = mWeightEditText.getText().toString().trim();
 
-        PetsDao<Pet> petsDao = new PetsDaoImpl();
-        long id = intent.getLongExtra(ConstantsClass.ID, -1);
-        if (id > -1) {
-            tempPet.setId(id);
-            petsDao.updateItemWithContentResolver(getContentResolver(), id, tempPet);
+        boolean badName = TextUtils.isEmpty(name);
+        boolean badBreed = TextUtils.isEmpty(breed);
+        boolean badWeight = TextUtils.isEmpty(weight);
+
+        if (badName == true || badBreed == true || badWeight == true) {
+            return;
         } else {
-            long newRowId = petsDao.insertItemAndGetIdWithContentResolver(getContentResolver(), tempPet);
-            // Log.e("New row id ", newRowId + " ");
+
+            Intent intent = getIntent();
+            tempPet.setGender(mGender);
+            tempPet.setName(name);
+            tempPet.setBreed(breed);
+            int tempWeight = Integer.parseInt(weight);
+            tempPet.setWeight(tempWeight);
+
+            PetsDao<Pet> petsDao = new PetsDaoImpl();
+            long id = intent.getLongExtra(ConstantsClass.ID, -1);
+            if (id > -1) {
+                tempPet.setId(id);
+                petsDao.updateItemWithContentResolver(getContentResolver(), id, tempPet);
+            } else {
+                long newRowId = petsDao.insertItemAndGetIdWithContentResolver(getContentResolver(), tempPet);
+                // Log.e("New row id ", newRowId + " ");
+            }
         }
 
     }
