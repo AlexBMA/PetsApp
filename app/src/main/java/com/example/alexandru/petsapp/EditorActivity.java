@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +20,7 @@ import android.widget.Spinner;
 
 import com.example.alexandru.dao.PetsDao;
 import com.example.alexandru.dao.PetsDaoImpl;
+import com.example.alexandru.data.ConstantsClass;
 import com.example.alexandru.data.PetContact.PetEntry;
 import com.example.alexandru.model.Pet;
 
@@ -67,7 +67,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         } else {
             setTitle(R.string.add_mode);
         }
-
 
 
 
@@ -129,16 +128,23 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private void insertOrUpdate() {
         Pet tempPet = new Pet();
+
+        Intent intent = getIntent();
         tempPet.setGender(mGender);
         tempPet.setName(mNameEditText.getText().toString().trim());
         tempPet.setBreed(mBreedEditText.getText().toString().trim());
         int tempWeight = Integer.parseInt(mWeightEditText.getText().toString().trim());
-        tempPet.setWeight(tempWeight + (int) (Math.random() * 200));
+        tempPet.setWeight(tempWeight);
 
         PetsDao<Pet> petsDao = new PetsDaoImpl();
-
-        long newRowId = petsDao.insertItemAndGetIdWithContentResolver(getContentResolver(), tempPet);
-        Log.e("New row id ", newRowId + " ");
+        long id = intent.getLongExtra(ConstantsClass.ID, -1);
+        if (id > -1) {
+            tempPet.setId(id);
+            petsDao.updateItemWithContentResolver(getContentResolver(), id, tempPet);
+        } else {
+            long newRowId = petsDao.insertItemAndGetIdWithContentResolver(getContentResolver(), tempPet);
+            // Log.e("New row id ", newRowId + " ");
+        }
 
     }
 
@@ -185,25 +191,35 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        data.moveToFirst();
-        mNameEditText.setText(data.getString(data.getColumnIndex(PetEntry.COLUMN_PET_NAME)));
-        mBreedEditText.setText(data.getString(data.getColumnIndex(PetEntry.COLUMN_PET_BREED)));
-        mWeightEditText.setText(data.getInt(data.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT)) + "");
+        if (data.moveToFirst()) {
 
 
-        int gender = data.getInt(data.getColumnIndex(PetEntry.COLUMN_PET_GENDER));
+            int nameColumnIndex = data.getColumnIndex(PetEntry.COLUMN_PET_NAME);
+            int breedColumnIndex = data.getColumnIndex(PetEntry.COLUMN_PET_BREED);
+            int genderColumnIndex = data.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
+            int weightColumnIndex = data.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT);
+
+            String name = data.getString(nameColumnIndex);
+            String breed = data.getString(breedColumnIndex);
+            int weight = data.getInt(weightColumnIndex);
+
+            mNameEditText.setText(name);
+            mBreedEditText.setText(breed);
+            mWeightEditText.setText(Integer.toString(weight));
 
 
-        switch (gender) {
-            case PetEntry.GENDER_MALE:
-                mGenderSpinner.setSelection(1);
-                break;
-            case PetEntry.GENDER_FEMALE:
-                mGenderSpinner.setSelection(2);
-                break;
-            default:
-                mGenderSpinner.setSelection(0);
-                break;
+            int gender = data.getInt(genderColumnIndex);
+            switch (gender) {
+                case PetEntry.GENDER_MALE:
+                    mGenderSpinner.setSelection(1);
+                    break;
+                case PetEntry.GENDER_FEMALE:
+                    mGenderSpinner.setSelection(2);
+                    break;
+                default:
+                    mGenderSpinner.setSelection(0);
+                    break;
+            }
         }
     }
 
