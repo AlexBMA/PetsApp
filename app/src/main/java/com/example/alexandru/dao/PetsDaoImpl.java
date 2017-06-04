@@ -225,6 +225,7 @@ public class PetsDaoImpl implements PetsDao<Pet> {
     public void deleteAllItemWithContentResolver(ContentResolver contentResolver) {
 
         contentResolver.delete(PetContact.PetEntry.CONTENT_URI, null, null);
+        //Log.e("DEL ALL", PetContact.PetEntry.CONTENT_URI.toString());
     }
 }
 

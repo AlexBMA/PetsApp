@@ -136,13 +136,9 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
         // PetsDao<Pet> petsDao = new PetsDaoImpl();
         // Cursor res = petsDao.getAllItemsContentResolver(getContentResolver());
-
         // petCursorAdapter  = new PetCursorAdapter(this, res);
-
-
         return new CursorLoader(this, PetContact.PetEntry.CONTENT_URI, PROJECTION, SELECTION, null, null);
     }
 
