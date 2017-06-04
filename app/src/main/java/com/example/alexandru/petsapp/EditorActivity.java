@@ -59,6 +59,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private int mGender = 0;
     private Uri mCurrentPetUri;
 
+    private long id = -1;
+
     private boolean mPetHasChanged = false;
 
 
@@ -80,6 +82,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mCurrentPetUri = parent.getData();
         if (mCurrentPetUri != null) {
             setTitle(R.string.edit_mode);
+            id = parent.getLongExtra(ConstantsClass.ID, -1);
         } else {
             setTitle(R.string.add_mode);
             invalidateOptionsMenu();
@@ -163,15 +166,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             return;
         } else {
 
-            Intent intent = getIntent();
             tempPet.setGender(mGender);
             tempPet.setName(name);
             tempPet.setBreed(breed);
             int tempWeight = Integer.parseInt(weight);
             tempPet.setWeight(tempWeight);
-
             PetsDao<Pet> petsDao = new PetsDaoImpl();
-            long id = intent.getLongExtra(ConstantsClass.ID, -1);
+
             if (id > -1) {
                 tempPet.setId(id);
                 petsDao.updateItemWithContentResolver(getContentResolver(), id, tempPet);
@@ -204,6 +205,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             }
 
             case R.id.action_delete: {
+                showDeleteConfirmationDialog();
                 return true;
             }
 
@@ -342,5 +344,45 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             menuItem.setVisible(false);
         }
         return true;
+    }
+
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deletePet();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Perform the deletion of the pet in the database.
+     */
+    private void deletePet() {
+
+
+        if (id > -1) {
+            PetsDao<Pet> petsDao = new PetsDaoImpl();
+            petsDao.deleteItemWithContentResolver(getContentResolver(), id, mCurrentPetUri);
+        }
+        finish();
     }
 }
