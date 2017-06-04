@@ -57,7 +57,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      * 0 for unknown gender, 1 for male, 2 for female.
      */
     private int mGender = 0;
-    private Uri dataUri;
+    private Uri mCurrentPetUri;
 
     private boolean mPetHasChanged = false;
 
@@ -77,11 +77,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
 
         Intent parent = getIntent();
-        dataUri = parent.getData();
-        if (dataUri != null) {
+        mCurrentPetUri = parent.getData();
+        if (mCurrentPetUri != null) {
             setTitle(R.string.edit_mode);
         } else {
             setTitle(R.string.add_mode);
+            invalidateOptionsMenu();
         }
 
 
@@ -238,8 +239,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        if (dataUri != null)
-            return new CursorLoader(this, dataUri, PROJECTION, SELECTION, null, null);
+        if (mCurrentPetUri != null)
+            return new CursorLoader(this, mCurrentPetUri, PROJECTION, SELECTION, null, null);
         return null;
     }
 
@@ -330,5 +331,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         // Show dialog that there are unsaved changes
         showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        if (mCurrentPetUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
+        return true;
     }
 }
