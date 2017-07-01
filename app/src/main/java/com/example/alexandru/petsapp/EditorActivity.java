@@ -35,6 +35,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private static final String[] PROJECTION = null;
     // This is the select criteria
     private static final String SELECTION = null;
+
     private final int LOADER_INDEX = 1;
     /**
      * EditText field to enter the pet's name
@@ -349,7 +350,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private void showDeleteConfirmationDialog() {
         // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
+        // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_dialog_msg);
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {

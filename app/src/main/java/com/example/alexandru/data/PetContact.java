@@ -49,7 +49,6 @@ public final class PetContact {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PETS;
 
 
-        private static final String CREATE_TABLE = "";
 
 
         public static boolean isValidGender(Integer gender) {
